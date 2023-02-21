@@ -1,13 +1,14 @@
 import "./App.css";
 import { useState, useEffect, useContext } from "react";
 import { BigNumber, ethers, utils } from "ethers";
-import { contractAddress, ABI } from "./data";
+import { contractAddress, ABI, PlayersData } from "./data";
 import AdminPanel from "./AdminPanel";
-import ErroModal from "./ErroModal";
-import Modal from "./Modal";
+import TxnModal from "./TxnModal";
+import Slider from "./Slider";
+import TxnResultModal from "./TxnResultModal";
 import { AppContext } from "./context";
 function App() {
-  console.log("app rendered");
+  console.log("APP");
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [IsMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
@@ -20,12 +21,12 @@ function App() {
   });
   const [PlayerIndex, setPlayerIndex] = useState("");
   const [winner, setWinner] = useState(
-    "App not connected to the contract yet!"
+    "App not connected to the contract yet!. please wait."
   );
 
   //Data from Context
   const data = useContext(AppContext);
-  const { setHaveTransaction, haveTxnError, setTxnError, setHaveTxnError } = {
+  const { state, dispatch } = {
     ...data,
   };
 
@@ -49,12 +50,10 @@ function App() {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, ABI, signer);
     const contractOwner = await contract.Owner();
-    console.log(`iscontractOwner:${isContractOwner}`);
-
+    console.log(`owner address:${contractOwner}`);
     if (contractOwner.toLowerCase() === walletAddress.toLowerCase()) {
       setIsContractOwner(true);
     }
-    console.log(`iscontractOwner:${isContractOwner}`);
   }
   function MetaMaskChecker() {
     if (window.ethereum) {
@@ -73,17 +72,17 @@ function App() {
     let proposal3 = await contract.senators(2);
     let newNames = [];
     //I use the following object for have a key in rendering with map() method
-    let Name1 = { key: 0, Name: proposal1 };
-    let Name2 = { key: 1, Name: proposal2 };
-    let Name3 = { key: 2, Name: proposal3 };
+    let Name1 = { key: 0, Name: proposal1, imgURL: PlayersData[0].img };
+    let Name2 = { key: 1, Name: proposal2, imgURL: PlayersData[1].img };
+    let Name3 = { key: 2, Name: proposal3, imgURL: PlayersData[2].img };
     newNames.push(Name1, Name2, Name3);
     //get number of voter that can vote to proposals
     let numOfVos = await contract.numberOfVoters();
     numOfVos = numOfVos.toNumber();
+
     let newdata = { ...dataFromContract };
     newdata.numOfVoter = numOfVos;
     newdata.proposals = newNames;
-    console.log(` get Data from contract `);
     newdata.contractAddress = contract.address;
 
     let numberOfVoteForRonaldo = await contract.NumOfVote(0);
@@ -105,10 +104,6 @@ function App() {
     const contract = new ethers.Contract(contractAddress, ABI, signer);
     const winner = await contract.Winner();
 
-    console.log(`winner is ${winner} type:${typeof winner}`);
-    console.log(
-      `we get the winner from the contract with this txn hash:${winner.hash}`
-    );
     setWinner((prev) => winner);
   };
   useEffect(() => {
@@ -119,45 +114,74 @@ function App() {
     getWinner();
   }, [isContractOwner, IsMetaMaskInstalled, isWalletConnected]);
 
-  async function vote() {
-    try {
-      setHaveTransaction((prev) => !prev);
-      console.log(`Vote function handler initiated`);
+  async function vote(e) {
+    e.preventDefault();
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, ABI, signer);
-      const Txn = await contract.VoteToSenator(BigNumber.from(PlayerIndex));
+    if (
+      PlayerIndex.toLowerCase() === "cristiano".toLowerCase() ||
+      PlayerIndex.toLowerCase() === "lionel".toLowerCase() ||
+      PlayerIndex.toLowerCase() === "Kylian".toLowerCase()
+    ) {
+      let index;
+      if (PlayerIndex.toLowerCase() === "cristiano".toLowerCase()) {
+        index = 0;
+      }
+      if (PlayerIndex.toLowerCase() === "lionel".toLowerCase()) {
+        index = 1;
+      }
+      if (PlayerIndex.toLowerCase() === "Kylian".toLowerCase()) {
+        index = 2;
+      }
 
-      console.log(`Vote Txn address:${Txn.hash}`);
+      try {
+        // setHaveTransaction((prev) => !prev);
+        dispatch({ type: "TXN_ON" });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(contractAddress, ABI, signer);
+        const Txn = await contract.VoteToSenator(BigNumber.from(index));
+        await Txn.wait();
+        console.log(`Vote Txn address:${Txn.hash}`);
 
-      //refresh data from contract
-      let numberOfVoteForRonaldo = await contract.NumOfVote(0);
-      let numberOfVoteForMessi = await contract.NumOfVote(1);
-      let numberOfVoteForMbappe = await contract.NumOfVote(2);
-      let array = [
-        numberOfVoteForRonaldo.toNumber(),
-        numberOfVoteForMessi.toNumber(),
-        numberOfVoteForMbappe.toNumber(),
-      ];
-      let newdata = { ...dataFromContract };
-      newdata.NumberOfVotes = array;
-      setDataFromContract(newdata);
-      getWinner();
+        //refresh data from contract
+        let numberOfVoteForRonaldo = await contract.NumOfVote(0);
+        let numberOfVoteForMessi = await contract.NumOfVote(1);
+        let numberOfVoteForMbappe = await contract.NumOfVote(2);
+        let array = [
+          numberOfVoteForRonaldo.toNumber(),
+          numberOfVoteForMessi.toNumber(),
+          numberOfVoteForMbappe.toNumber(),
+        ];
+        let newdata = { ...dataFromContract };
+        newdata.NumberOfVotes = array;
+        setDataFromContract(newdata);
+        getWinner();
+        setPlayerIndex("");
+        // setHaveTransaction((prev) => !prev);
+        dispatch({ type: "TXN_OFF" });
+        dispatch({ type: "TXN_RESULT", payload: Txn.hash });
+      } catch (e) {
+        // setHaveTransaction((prev) => !prev);
+        dispatch({ type: "TXN_OFF" });
+        dispatch({ type: "TXN_RESULT", payload: e.message });
+
+        // setTxnError(e.error.message);
+        // setHaveTxnError((prev) => !prev);
+      }
+    } else {
+      dispatch({
+        type: "TXN_RESULT",
+        payload: "Enter a Valid soccer player first name please!",
+      });
       setPlayerIndex("");
-      setHaveTransaction((prev) => !prev);
-    } catch (e) {
-      setHaveTransaction((prev) => !prev);
-      setTxnError(e.error.message);
-      setHaveTxnError((prev) => !prev);
     }
   }
 
   if (IsMetaMaskInstalled) {
     return (
       <main className="main-container">
-        <header className="headerSection">
-          <h2 className="Heading">polling</h2>
+        <header>
+          <h2>Blockchain Voting</h2>
 
           <div className="Addresses">
             <div>
@@ -168,24 +192,23 @@ function App() {
             </div>
           </div>
         </header>
-        <div className="Info">
-          In this contract, you can vote for your favorite soccer player. The
-          voting process are done with your wallet.
-        </div>
+        <img
+          className="BlockchianImage"
+          src="https://i.pinimg.com/564x/06/5f/37/065f371e9354245f3dfc8fa517eb99f9.jpg"
+          alt="dartar"
+        />
+        <Slider />
+        <TxnResultModal />
         <div className="container">
           <div className="listOfProposal">
+            <h4>Soccer Players</h4>
             <div>
-              <h4 className="subHeader">Soccer Players</h4>
               {dataFromContract.proposals.map((proposal) => {
                 return (
-                  <div key={proposal.key}>
-                    {proposal.key}: {proposal.Name}
-                    {"   ("}
-                    <span className="NumOfVoteForEachProposal">
-                      {dataFromContract.NumberOfVotes[proposal.key]}
-                    </span>{" "}
-                    vote
-                    {")"}
+                  <div key={proposal.key} className="avatar">
+                    <img src={proposal.imgURL} alt="" />
+                    <p>{proposal.Name},</p>
+                    <h1>{dataFromContract.NumberOfVotes[proposal.key]} vote</h1>
                   </div>
                 );
               })}
@@ -195,30 +218,30 @@ function App() {
           <div className="Vote2FootbalPlayer">
             <div className="voters">
               Number Of choosed voters by contract owner:
-              <span className="NumOfVoteForEachProposal">
-                {" "}
-                {dataFromContract.numOfVoter}
-              </span>
+              <span> {dataFromContract.numOfVoter}</span>
+              <div>
+                {state.VOTERS.map((voter) => {
+                  return <div key={voter.id}>{voter.address}.</div>;
+                })}
+              </div>
             </div>
+
             <form>
               <input
-                placeholder="Index of football player..."
+                placeholder="Enter first name of football player"
                 onChange={(e) => setPlayerIndex(e.target.value)}
                 value={PlayerIndex}
               />
+              <button onClick={vote}>Vote</button>
             </form>
-            <button onClick={vote}>Vote</button>
           </div>
         </div>
         <div className="winner">
-          <h2>
-            Most popular soccer player is :{" "}
-            <p className="NumOfVoteForEachProposal">{winner}</p>
-          </h2>
+          <h2>Most popular soccer player is :</h2>
+          <p>{winner}</p>
         </div>
         {isContractOwner ? <AdminPanel /> : null}
-        <Modal />
-        {haveTxnError ? <ErroModal /> : null}
+        <TxnModal />
       </main>
     );
   } else {

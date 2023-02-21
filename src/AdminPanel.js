@@ -1,47 +1,55 @@
 import React from "react";
 import "./App.css";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { BigNumber, ethers, utils } from "ethers";
 import { contractAddress, ABI } from "./data";
 import { AppContext } from "./context";
 
 const AdminPanel = () => {
+  console.log(`ADMIN-PANEL`);
   const [inputVale, setInputValue] = useState("");
 
   //Data from Context
   const data = useContext(AppContext);
-  const { setHaveTransaction, setTxnError, setHaveTxnError } = { ...data };
+  const { state, dispatch } = { ...data };
 
-  const addVoterHandler = async () => {
+  const addVoterHandler = async (e) => {
+    e.preventDefault();
     try {
-      setHaveTransaction((prev) => !prev);
+      dispatch({ type: "TXN_ON" });
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contract = new ethers.Contract(contractAddress, ABI, signer);
       const Txn = await contract.chooseVoters(inputVale);
       await Txn.wait();
-      console.log(`Txn done with this Txn address:${Txn.hash}`);
+
       if (Txn.hash) {
-        setHaveTransaction((prev) => !prev);
+        // setHaveTransaction((prev) => !prev);
+        dispatch({ type: "TXN_OFF" });
+        dispatch({ type: "TXN_RESULT", payload: Txn.hash });
       }
       setInputValue("");
+      dispatch({ type: "ADD_VOTERS", payload: inputVale });
     } catch (e) {
-      setHaveTransaction((prev) => !prev);
-      setTxnError(e.message);
-      setHaveTxnError((prev) => !prev);
+      // setHaveTransaction((prev) => !prev);
+      dispatch({ type: "TXN_OFF" });
+      // setTxnError(e.message);
+      dispatch({ type: "TXN_RESULT", payload: e.message });
+      // setHaveTxnError((prev) => !prev);
     }
   };
   return (
     <div className="adminPanel">
-      <h4 className="subHeader">Admin Panel</h4>
+      <h4>Admin Panel</h4>
       <form>
         <input
           placeholder="Address : 0x..."
           value={inputVale}
           onChange={(e) => setInputValue(e.target.value)}
+          required
         />
+        <button onClick={addVoterHandler}>Add voter</button>
       </form>
-      <button onClick={addVoterHandler}>Add voter</button>
     </div>
   );
 };

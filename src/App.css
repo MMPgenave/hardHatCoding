@@ -1,9 +1,7 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
-.Info {
-  @apply mt-12 text-center text-slate-100 w-3/4 mx-auto flex flex-col text-2xl;
-}
+@tailwind utilities; */
+
 .NoMatamask {
   @apply mt-40 text-center;
 }
@@ -16,72 +14,86 @@
 .main-container {
   @apply bg-gray-900 text-white h-full;
 }
-.headerSection {
-  @apply flex flex-col md:flex-row justify-between  mx-auto bg-gray-800;
+/* bg-[url('./Images/Blockchain.jfif')] */
+/* md:flex-col */
+header {
+  @apply flex flex-col  flex-wrap  sm:flex-row h-1/4 justify-around items-baseline mx-auto bg-gray-800;
 }
 
-.Heading {
-  @apply text-cyan-500 mt-3 p-3 font-bold text-7xl;
+header > h2 {
+  @apply text-cyan-500 my-auto font-bold text-7xl;
 }
 
 .Addresses {
-  @apply flex flex-col text-sm mt-1  py-6 px-12;
+  @apply /*flex flex-col  */ text-lg /*md:text-sm mt-1*/  py-6 px-12;
 }
-.Addresses > div {
-  @apply flex flex-col mt-2;
-}
-.Addresses > div > h4 {
+
+.Addresses h4 {
   @apply text-cyan-300 ml-2;
 }
-.voters {
-  @apply text-2xl mt-6 text-cyan-200 mb-6;
-}
-input {
-  @apply px-6 py-3 text-gray-100 border-none rounded-t-lg outline-none bg-gray-800 placeholder-gray-400   placeholder:text-2xl z-40;
-}
 
-button {
-  @apply bg-cyan-600 px-4 py-2  rounded-lg text-slate-100 font-bold text-2xl hover:bg-cyan-800;
+.BlockchianImage {
+  @apply w-full mx-auto h-64;
 }
-
 form {
-  @apply flex flex-col  border rounded-lg border-gray-600 mt-24;
+  @apply flex flex-col  border rounded-lg border-gray-600 mr-4 mt-32 p-6;
 }
-.subHeader {
-  @apply text-cyan-500 mt-3 p-3 font-bold text-4xl;
+form > input {
+  @apply text-gray-100 text-2xl border-none rounded-t-lg outline-none bg-gray-800 placeholder-gray-400 p-6  placeholder:text-2xl z-40;
+}
+
+form > button {
+  @apply bg-cyan-400 px-4 py-2  rounded-lg text-slate-100 font-bold text-2xl hover:bg-cyan-800;
+}
+
+.listOfProposal > h4 {
+  @apply text-cyan-500 mt-8 mb-6 ml-4 p-3 font-bold text-4xl uppercase tracking-wider;
 }
 .adminPanel {
   @apply bg-gray-900 text-white flex flex-col mt-12 w-4/5 mx-auto border-2 rounded-xl border-slate-400;
 }
-.container {
-  @apply w-3/4 mx-auto flex flex-row justify-between mt-12 border-2 rounded-xl border-slate-400;
-}
-.listOfProposal,
-.Vote2FootbalPlayer {
-  @apply text-white flex flex-col w-1/2;
+.adminPanel > h4 {
+  @apply text-cyan-500 mt-8 mb-6 ml-4 p-3 font-bold text-4xl uppercase tracking-wider;
 }
 
-.listOfProposal > div > div {
-  @apply mt-3 p-3 font-bold text-3xl;
+.container {
+  @apply w-4/5 mx-auto flex flex-wrap flex-row justify-between mt-12 border-2 rounded-xl border-slate-400;
 }
-.NumOfVoteForEachProposal {
-  @apply text-yellow-300 text-3xl;
+
+.avatar {
+  @apply flex flex-row items-center justify-between font-bold text-3xl mt-2 ml-2 mb-2;
+}
+
+.avatar img {
+  @apply w-48 h-48 rounded-full border-2 border-cyan-400;
+}
+
+.avatar > h1 {
+  @apply text-4xl text-yellow-500;
+}
+
+.voters {
+  @apply text-4xl mt-10 mr-6 text-cyan-300 mb-6;
+}
+
+.voters > span {
+  @apply text-yellow-500;
+}
+.voters > div {
+  @apply text-lg text-yellow-400 mt-4;
 }
 .winner {
-  @apply text-3xl font-bold text-center flex flex-col justify-between text-cyan-400 mt-12 mb-8;
+  @apply text-3xl font-bold text-center text-cyan-400 mt-12 mb-8;
+}
+.winner > p {
+  @apply text-yellow-500 mt-6;
 }
 .haveTransaction {
-  @apply flex items-center justify-center h-screen text-4xl text-sky-400 bg-cyan-900 opacity-95 fixed inset-0 z-50;
+  @apply flex  justify-center h-screen text-4xl text-sky-400 bg-gray-900 opacity-95 fixed inset-0 z-50;
 }
 .noTransaction {
   @apply invisible;
 }
 .modalContainer {
-  @apply flex items-center justify-center h-screen bg-slate-200 border-2  border-cyan-400 w-1/2 h-1/4 mx-auto text-center text-gray-800;
-}
-.ErrorMessage {
-  @apply flex flex-col items-center justify-center h-screen text-4xl text-orange-700 bg-stone-900 opacity-95 fixed inset-0 z-50;
-}
-.ErrorModalContainer {
-  @apply flex items-center justify-center h-screen bg-gray-900 border-2  border-cyan-400 w-1/2 h-1/4 mx-auto text-center text-orange-800;
+  @apply flex flex-wrap flex-col justify-center items-center bg-slate-400 border-2 rounded-xl border-cyan-900 w-full h-1/2 mr-12 ml-12 my-auto text-gray-800 font-bold;
 }
