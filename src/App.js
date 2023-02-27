@@ -194,11 +194,11 @@ function App() {
             </div>
           </div>
         </header>
-        <img
+        {/* <img
           className="BlockchianImage"
           src="https://i.pinimg.com/564x/06/5f/37/065f371e9354245f3dfc8fa517eb99f9.jpg"
           alt="dartar"
-        />
+        /> */}
 
         <Slider />
         <TxnResultModal />
