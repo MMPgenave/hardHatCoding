@@ -7,7 +7,7 @@ function TxnResultModal() {
     if (state.showTxnResult) {
       timer = setTimeout(() => {
         dispatch({ type: "SHUT_DOWN_TxnResultModal_COMPONENT" });
-      }, 3000);
+      }, 2000);
     }
 
     return () => {

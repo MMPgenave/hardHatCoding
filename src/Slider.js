@@ -14,7 +14,7 @@ const Slider = () => {
         return PlayersData[player.id + 1];
       }
     });
-  }, 1000);
+  }, 2000);
   useEffect(() => {
     return () => clearTimeout(Timer);
   });

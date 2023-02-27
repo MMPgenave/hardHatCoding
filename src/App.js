@@ -2,6 +2,7 @@ import "./App.css";
 import { useState, useEffect, useContext } from "react";
 import { BigNumber, ethers, utils } from "ethers";
 import { contractAddress, ABI, PlayersData } from "./data";
+import ContactMe from "./ContactMe";
 import AdminPanel from "./AdminPanel";
 import TxnModal from "./TxnModal";
 import Slider from "./Slider";
@@ -163,7 +164,8 @@ function App() {
       } catch (e) {
         // setHaveTransaction((prev) => !prev);
         dispatch({ type: "TXN_OFF" });
-        dispatch({ type: "TXN_RESULT", payload: e.message });
+        console.log(`dartar:${e.error.message}`);
+        dispatch({ type: "TXN_RESULT", payload: e.error.message });
 
         // setTxnError(e.error.message);
         // setHaveTxnError((prev) => !prev);
@@ -197,6 +199,7 @@ function App() {
           src="https://i.pinimg.com/564x/06/5f/37/065f371e9354245f3dfc8fa517eb99f9.jpg"
           alt="dartar"
         />
+
         <Slider />
         <TxnResultModal />
         <div className="container">
@@ -242,6 +245,7 @@ function App() {
         </div>
         {isContractOwner ? <AdminPanel /> : null}
         <TxnModal />
+        <ContactMe />
       </main>
     );
   } else {

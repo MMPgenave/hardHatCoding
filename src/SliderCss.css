@@ -13,5 +13,9 @@
 }
 
 .slider-container p:first-of-type {
-  @apply text-cyan-500  text-3xl;
+  @apply text-yellow-500  text-4xl;
+}
+
+.slider-container p:nth-of-type(2) {
+  @apply indent-6;
 }

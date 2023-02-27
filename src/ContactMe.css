@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container-contactme {
+  @apply w-64 mx-auto p-4;
+}
+.container-contactme > p {
+  @apply text-2xl text-center mb-4 text-slate-400;
+}
+.container-contactme div {
+  @apply flex text-4xl justify-around text-cyan-500;
+}
+.socialMedia {
+  @apply hover:text-5xl;
+}

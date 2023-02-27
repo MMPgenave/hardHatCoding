@@ -34,7 +34,7 @@ const AdminPanel = () => {
       // setHaveTransaction((prev) => !prev);
       dispatch({ type: "TXN_OFF" });
       // setTxnError(e.message);
-      dispatch({ type: "TXN_RESULT", payload: e.message });
+      dispatch({ type: "TXN_RESULT", payload: e.error.message });
       // setHaveTxnError((prev) => !prev);
     }
   };
