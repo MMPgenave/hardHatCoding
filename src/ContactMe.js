@@ -4,7 +4,7 @@ import { MMP_Info } from "./data";
 function ContactMe() {
   return (
     <div className="container-contactme">
-      <p>contact me via</p>
+      <p>contact me</p>
       <div>
         {MMP_Info.map((item) => {
           return (
